@@ -91,4 +91,3 @@ try :
 
 except Exception as the_exception:
     print(f"Ha ocurrido un error; no se puede continuar; el error que hay es el siguiente: {the_exception}")
-
