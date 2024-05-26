@@ -38,10 +38,10 @@ class WorkersIncomeData:
         except Exception as e:
             print(f"Error connecting to database: {e}")
             return None, None
-    
+
     @staticmethod
     def CreateTable():
-        """ Creates the user table in the database """
+        """Creates the user table in the database"""
         cursor, connection = None, None
         try:
             cursor, connection = WorkersIncomeData.GetCursor()
@@ -70,6 +70,7 @@ class WorkersIncomeData:
         finally:
             if connection:
                 connection.close()
+
     
     @staticmethod
     def Insert(EMPLOYER):
@@ -80,17 +81,18 @@ class WorkersIncomeData:
             if cursor and connection:
                 cursor.execute("""
                     INSERT INTO Employerinput (
-                        name, id, basic_salary, monthly_worked_days, days_leave, 
-                        transportation_allowance, daytime_overtime_hours, nighttime_overtime_hours, 
-                        daytime_holiday_overtime_hours, nighttime_holiday_overtime_hours, 
-                        sick_leave_days, health_contribution_percentage, pension_contribution_percentage, 
+                        name, id, basic_salary, monthly_worked_days, days_leave,
+                        transportation_allowance, daytime_overtime_hours, nighttime_overtime_hours,
+                        daytime_holiday_overtime_hours, nighttime_holiday_overtime_hours,
+                        sick_leave_days, health_contribution_percentage, pension_contribution_percentage,
                         solidarity_pension_fund_contribution_percentage
                     ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """, (
-                    EMPLOYER.name, EMPLOYER.id, EMPLOYER.basic_salary, EMPLOYER.monthly_worked_days, EMPLOYER.days_leave, 
-                    EMPLOYER.transportation_allowance, EMPLOYER.daytime_overtime_hours, EMPLOYER.nighttime_overtime_hours, 
-                    EMPLOYER.daytime_holiday_overtime_hours, EMPLOYER.nighttime_holiday_overtime_hours, 
-                    EMPLOYER.sick_leave_days, EMPLOYER.health_contribution_percentage, EMPLOYER.pension_contribution_percentage, 
+                    EMPLOYER.name, EMPLOYER.id, EMPLOYER.basic_salary, EMPLOYER.monthly_worked_days,
+                    EMPLOYER.days_leave, EMPLOYER.transportation_allowance, EMPLOYER.daytime_overtime_hours,
+                    EMPLOYER.nighttime_overtime_hours, EMPLOYER.daytime_holiday_overtime_hours,
+                    EMPLOYER.nighttime_holiday_overtime_hours, EMPLOYER.sick_leave_days,
+                    EMPLOYER.health_contribution_percentage, EMPLOYER.pension_contribution_percentage,
                     EMPLOYER.solidarity_pension_fund_contribution_percentage
                 ))
                 connection.commit()
@@ -101,6 +103,7 @@ class WorkersIncomeData:
         finally:
             if connection:
                 connection.close()
+
 
     @staticmethod
     def Droptable():
