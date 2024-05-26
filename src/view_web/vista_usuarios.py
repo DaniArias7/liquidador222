@@ -4,8 +4,7 @@ sys.path.append("./src")
 from src.Controller.Controladortablas import WorkersIncomeData, WorkersoutputsData
 from src.Model.MonthlyPaymentLogic import SettlementParameters, calculate_settlement
 import src.Model.TablesEmployer as Temployer
-from flask import Blueprint, request, redirect, url_for, render_template
-from src.Controller.Controladortablas import WorkersIncomeData
+from flask import Blueprint, request, redirect, url_for, render_template, flash
 
 blueprint = Blueprint('vista_usuarios', __name__)
 
