@@ -107,6 +107,7 @@ class WorkersIncomeData:
 
 
 
+
     @staticmethod
     def Droptable():
         """Drop the 'Employeroutput' table if it exists in the database."""

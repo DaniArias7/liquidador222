@@ -18,42 +18,49 @@ def index():
 def crear_usuario():
     if request.method == 'POST':
         name = request.form['name']
+        id = request.form['id']
         basic_salary = float(request.form['basic_salary'])
-        workdays = int(request.form['workdays'])
-        sick_leave = int(request.form['sick_leave'])
-        transportation_aid = float(request.form['transportation_aid'])
-        dayshift_extra_hours = int(request.form['dayshift_extra_hours'])
-        nightshift_extra_hours = int(request.form['nightshift_extra_hours'])
-        dayshift_extra_hours_holidays = int(request.form['dayshift_extra_hours_holidays'])
-        nightshift_extra_hours_holidays = int(request.form['nightshift_extra_hours_holidays'])
-        leave_days = int(request.form['leave_days'])
-        percentage_health_insurance = float(request.form['percentage_health_insurance'])
-        percentage_retirement_insurance = float(request.form['percentage_retirement_insurance'])
-        percentage_retirement_fund = float(request.form['percentage_retirement_fund'])
+        monthly_worked_days = int(request.form['monthly_worked_days'])
+        days_leave = int(request.form['days_leave'])
+        transportation_allowance = float(request.form['transportation_allowance'])
+        daytime_overtime_hours = int(request.form['daytime_overtime_hours'])
+        nighttime_overtime_hours = int(request.form['nighttime_overtime_hours'])
+        daytime_holiday_overtime_hours = int(request.form['daytime_holiday_overtime_hours'])
+        nighttime_holiday_overtime_hours = int(request.form['nighttime_holiday_overtime_hours'])
+        sick_leave_days = int(request.form['sick_leave_days'])
+        health_contribution_percentage = float(request.form['health_contribution_percentage'])
+        pension_contribution_percentage = float(request.form['pension_contribution_percentage'])
+        solidarity_pension_fund_contribution_percentage = float(request.form['solidarity_pension_fund_contribution_percentage'])
 
-        new_employer = Temployer.Employerinput(
+        # Crear una instancia de Employerinput
+        employer = Temployer.Employerinput(
             name=name,
-            id=str(uuid.uuid4()),  # Generate a unique ID for each user
+            id=id,
             basic_salary=basic_salary,
-            monthly_worked_days=workdays,
-            days_leave=leave_days,
-            transportation_allowance=transportation_aid,
-            daytime_overtime_hours=dayshift_extra_hours,
-            nighttime_overtime_hours=nightshift_extra_hours,
-            daytime_holiday_overtime_hours=dayshift_extra_hours_holidays,
-            nighttime_holiday_overtime_hours=nightshift_extra_hours_holidays,
-            sick_leave_days=sick_leave,
-            health_contribution_percentage=percentage_health_insurance,
-            pension_contribution_percentage=percentage_retirement_insurance,
-            solidarity_pension_fund_contribution_percentage=percentage_retirement_fund
+            monthly_worked_days=monthly_worked_days,
+            days_leave=days_leave,
+            transportation_allowance=transportation_allowance,
+            daytime_overtime_hours=daytime_overtime_hours,
+            nighttime_overtime_hours=nighttime_overtime_hours,
+            daytime_holiday_overtime_hours=daytime_holiday_overtime_hours,
+            nighttime_holiday_overtime_hours=nighttime_holiday_overtime_hours,
+            sick_leave_days=sick_leave_days,
+            health_contribution_percentage=health_contribution_percentage,
+            pension_contribution_percentage=pension_contribution_percentage,
+            solidarity_pension_fund_contribution_percentage=solidarity_pension_fund_contribution_percentage
         )
 
         try:
-            WorkersIncomeData.Insert(new_employer)
-            flash('Usuario creado con éxito', 'success')
+            # Verificar si el usuario ya existe en la base de datos
+            Temployer.Employerinput.primary_key(name, id, WorkersIncomeData)
+            # Insertar el usuario en la base de datos
+            WorkersIncomeData.Insert(employer)
+            flash('Usuario creado correctamente.', 'success')
+            return redirect(url_for('vista_usuarios.index'))
+        except Temployer.faileprimarykey as e:
+            flash(str(e), 'danger')
         except Exception as e:
-            flash(f'Error al crear usuario: {str(e)}', 'error')
-        return redirect(url_for('vista_usuarios.resultado'))
+            flash(str(e), 'danger')
 
     return render_template('crear_usuario.html')
 
