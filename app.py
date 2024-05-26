@@ -1,14 +1,20 @@
-from flask import Flask
+# Para las aplicaciones web creadas con Flask, debemos importar siempre el modulo flask
+# la clase request permite acceso a la información de la petición HTTP
+from flask import Flask  
+
 import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.view_web import vista_usuarios 
 
-app = Flask(__name__)
+# Flask constructor: crea una variable que nos servirá para comunicarle a Flask
+# la configuración que queremos para nuestra aplicación
+app = Flask(__name__)     
 app.secret_key = "supersecretkey"
 
-app.register_blueprint(vista_usuarios.blueprint)
+app.register_blueprint(vista_usuarios.blueprint )
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# Esta linea permite que nuestra aplicación se ejecute individualmente
+if __name__=='__main__':
+   app.run( debug=True )

@@ -25,15 +25,19 @@ class WorkersIncomeData:
     @staticmethod
     def GetCursor():
         """Establishes connection to the database and returns a cursor for querying"""
-        connection = psycopg2.connect(
-            database="neondb", 
-            user="neondb_owner", 
-            password="Gl1LUdEphgR7", 
-            host="ep-late-dew-a5zxdzl8.us-east-2.aws.neon.tech", 
-            port="5432"
-        )
-        cursor = connection.cursor()
-        return cursor, connection
+        try:
+            connection = psycopg2.connect(
+                database="neondb",
+                user="neondb_owner",
+                password="Gl1LUdEphgR7",
+                host="ep-late-dew-a5zxdzl8.us-east-2.aws.neon.tech",
+                port="5432"
+            )
+            cursor = connection.cursor()
+            return cursor, connection
+        except Exception as e:
+            print(f"Error connecting to database: {e}")
+            return None, None
     
     @staticmethod
     def CreateTable():
@@ -41,25 +45,26 @@ class WorkersIncomeData:
         cursor, connection = None, None
         try:
             cursor, connection = WorkersIncomeData.GetCursor()
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS Employerinput(
-                    name varchar(300) NOT NULL,
-                    id varchar(300) PRIMARY KEY NOT NULL,
-                    basic_salary float NOT NULL, 
-                    monthly_worked_days int NOT NULL, 
-                    days_leave int NOT NULL, 
-                    transportation_allowance float NOT NULL,
-                    daytime_overtime_hours int NOT NULL, 
-                    nighttime_overtime_hours int NOT NULL, 
-                    daytime_holiday_overtime_hours int NOT NULL,
-                    nighttime_holiday_overtime_hours int NOT NULL, 
-                    sick_leave_days int NOT NULL, 
-                    health_contribution_percentage float NOT NULL,
-                    pension_contribution_percentage float NOT NULL, 
-                    solidarity_pension_fund_contribution_percentage float NOT NULL
-                );
-            """)
-            connection.commit()
+            if cursor and connection:
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS Employerinput(
+                        name varchar(300) NOT NULL,
+                        id varchar(300) PRIMARY KEY NOT NULL,
+                        basic_salary float NOT NULL,
+                        monthly_worked_days int NOT NULL,
+                        days_leave int NOT NULL,
+                        transportation_allowance float NOT NULL,
+                        daytime_overtime_hours int NOT NULL,
+                        nighttime_overtime_hours int NOT NULL,
+                        daytime_holiday_overtime_hours int NOT NULL,
+                        nighttime_holiday_overtime_hours int NOT NULL,
+                        sick_leave_days int NOT NULL,
+                        health_contribution_percentage float NOT NULL,
+                        pension_contribution_percentage float NOT NULL,
+                        solidarity_pension_fund_contribution_percentage float NOT NULL
+                    );
+                """)
+                connection.commit()
         except Exception as e:
             print(f"Error creating table: {e}")
         finally:
@@ -67,35 +72,36 @@ class WorkersIncomeData:
                 connection.close()
     
     @staticmethod
-    def Insert(employer):
-        """Insert an employer's data into the 'Employerinput' table."""
+    def Insert(EMPLOYER):
+        """Insert an employer's data into the 'Employerinput' table"""
         cursor, connection = None, None
         try:
             cursor, connection = WorkersIncomeData.GetCursor()
-            cursor.execute("""
-                INSERT INTO Employerinput (
-                    name, id, basic_salary, monthly_worked_days, days_leave, 
-                    transportation_allowance, daytime_overtime_hours, nighttime_overtime_hours, 
-                    daytime_holiday_overtime_hours, nighttime_holiday_overtime_hours, sick_leave_days, 
-                    health_contribution_percentage, pension_contribution_percentage, 
-                    solidarity_pension_fund_contribution_percentage
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
-            """, (
-                employer.name, employer.id, employer.basic_salary, employer.monthly_worked_days, 
-                employer.days_leave, employer.transportation_allowance, employer.daytime_overtime_hours, 
-                employer.nighttime_overtime_hours, employer.daytime_holiday_overtime_hours, 
-                employer.nighttime_holiday_overtime_hours, employer.sick_leave_days, 
-                employer.health_contribution_percentage, employer.pension_contribution_percentage, 
-                employer.solidarity_pension_fund_contribution_percentage
-            ))
-            connection.commit()
+            if cursor and connection:
+                cursor.execute("""
+                    INSERT INTO Employerinput (
+                        name, id, basic_salary, monthly_worked_days, days_leave, 
+                        transportation_allowance, daytime_overtime_hours, nighttime_overtime_hours, 
+                        daytime_holiday_overtime_hours, nighttime_holiday_overtime_hours, 
+                        sick_leave_days, health_contribution_percentage, pension_contribution_percentage, 
+                        solidarity_pension_fund_contribution_percentage
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """, (
+                    EMPLOYER.name, EMPLOYER.id, EMPLOYER.basic_salary, EMPLOYER.monthly_worked_days, EMPLOYER.days_leave, 
+                    EMPLOYER.transportation_allowance, EMPLOYER.daytime_overtime_hours, EMPLOYER.nighttime_overtime_hours, 
+                    EMPLOYER.daytime_holiday_overtime_hours, EMPLOYER.nighttime_holiday_overtime_hours, 
+                    EMPLOYER.sick_leave_days, EMPLOYER.health_contribution_percentage, EMPLOYER.pension_contribution_percentage, 
+                    EMPLOYER.solidarity_pension_fund_contribution_percentage
+                ))
+                connection.commit()
         except Exception as e:
-            connection.rollback()
+            if connection:
+                connection.rollback()
             print(f"Error inserting data: {e}")
         finally:
             if connection:
                 connection.close()
-    
+
     @staticmethod
     def Droptable():
         """Drop the 'Employerinput' table if it exists in the database."""
@@ -109,7 +115,7 @@ class WorkersIncomeData:
         finally:
             if connection:
                 connection.close()
-    
+
     @staticmethod
     def DeleteWorker(NAME, ID):
         """Delete a worker from the 'Employerinput' table based on the provided name and ID."""
@@ -141,6 +147,8 @@ class WorkersIncomeData:
             """, (VALUEUPDATE, NAME, ID))
             connection.commit()
         except Exception as e:
+            if connection:
+                connection.rollback()
             print(f"Error updating worker: {e}")
         finally:
             if connection:
@@ -230,38 +238,47 @@ class WorkersIncomeData:
                 UPDATE Employerinput
                 SET 
                     name = %s,
-                    basic_salary = %s, 
-                    monthly_worked_days = %s, 
-                    days_leave = %s, 
+                    basic_salary = %s,
+                    monthly_worked_days = %s,
+                    days_leave = %s,
                     transportation_allowance = %s,
-                    daytime_overtime_hours = %s, 
-                    nighttime_overtime_hours = %s, 
+                    daytime_overtime_hours = %s,
+                    nighttime_overtime_hours = %s,
                     daytime_holiday_overtime_hours = %s,
-                    nighttime_holiday_overtime_hours = %s, 
-                    sick_leave_days = %s, 
+                    nighttime_holiday_overtime_hours = %s,
+                    sick_leave_days = %s,
                     health_contribution_percentage = %s,
-                    pension_contribution_percentage = %s, 
+                    pension_contribution_percentage = %s,
                     solidarity_pension_fund_contribution_percentage = %s
                 WHERE id = %s;
             """, (
-                usuario.name, usuario.basic_salary, usuario.monthly_worked_days, 
-                usuario.days_leave, usuario.transportation_allowance, usuario.daytime_overtime_hours, 
-                usuario.nighttime_overtime_hours, usuario.daytime_holiday_overtime_hours, 
-                usuario.nighttime_holiday_overtime_hours, usuario.sick_leave_days, 
-                usuario.health_contribution_percentage, usuario.pension_contribution_percentage, 
-                usuario.solidarity_pension_fund_contribution_percentage, usuario.id
+                usuario.name,
+                usuario.basic_salary,
+                usuario.monthly_worked_days,
+                usuario.days_leave,
+                usuario.transportation_allowance,
+                usuario.daytime_overtime_hours,
+                usuario.nighttime_overtime_hours,
+                usuario.daytime_holiday_overtime_hours,
+                usuario.nighttime_holiday_overtime_hours,
+                usuario.sick_leave_days,
+                usuario.health_contribution_percentage,
+                usuario.pension_contribution_percentage,
+                usuario.solidarity_pension_fund_contribution_percentage,
+                usuario.id
             ))
             connection.commit()
         except Exception as e:
-            connection.rollback()
+            if connection:
+                connection.rollback()
             print(f"Error updating user: {e}")
         finally:
             if connection:
                 connection.close()
 
-
-# Crear la tabla al iniciar el script
-WorkersIncomeData.CreateTable()
+# Aquí se puede añadir código para crear la tabla, insertar datos, etc.
+if __name__ == "__main__":
+    WorkersIncomeData.CreateTable()
 
 
 class  WorkersoutputsData():

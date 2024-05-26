@@ -1,9 +1,0 @@
-{% extends 'base.html' %}
-
-{% block content %}
-<div class="container">
-    <h2>Resultado del Cálculo</h2>
-    <p>El valor que se le deberá pagar al trabajador es: <strong>{{ amount_to_pay }}</strong></p>
-    <a href="{{ url_for('index') }}">Calcular otro salario</a>
-</div>
-{% endblock %}

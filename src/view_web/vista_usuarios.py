@@ -1,4 +1,6 @@
+from flask import Flask, render_template, request, redirect, url_for, flash, Blueprint
 import sys
+import uuid
 sys.path.append("C:/Users/ACER/liquidador_nomina")
 sys.path.append("./src")
 from src.Controller.Controladortablas import WorkersIncomeData, WorkersoutputsData
@@ -31,7 +33,7 @@ def crear_usuario():
 
         new_employer = Temployer.Employerinput(
             name=name,
-            id="dummy_id",  # Agrega lógica para ID si es necesario
+            id=str(uuid.uuid4()),  # Generate a unique ID for each user
             basic_salary=basic_salary,
             monthly_worked_days=workdays,
             days_leave=leave_days,
@@ -46,7 +48,11 @@ def crear_usuario():
             solidarity_pension_fund_contribution_percentage=percentage_retirement_fund
         )
 
-        WorkersIncomeData.Insert(new_employer)
+        try:
+            WorkersIncomeData.Insert(new_employer)
+            flash('Usuario creado con éxito', 'success')
+        except Exception as e:
+            flash(f'Error al crear usuario: {str(e)}', 'error')
         return redirect(url_for('vista_usuarios.resultado'))
 
     return render_template('crear_usuario.html')
@@ -76,8 +82,11 @@ def actualizar_informacion():
         usuario = WorkersIncomeData.buscar_usuario_por_nombre(modificar_nombre)
         if usuario:
             usuario.name = nuevo_nombre
-            WorkersIncomeData.actualizar_usuario(usuario)
-            flash("Usuario actualizado exitosamente", "success")
+            try:
+                WorkersIncomeData.actualizar_usuario(usuario)
+                flash("Usuario actualizado exitosamente", "success")
+            except Exception as e:
+                flash(f"Error al actualizar usuario: {str(e)}", "error")
             return redirect(url_for('vista_usuarios.resultado_actualizacion'))
         else:
             flash("Usuario no encontrado", "error")
