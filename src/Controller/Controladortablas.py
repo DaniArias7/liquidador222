@@ -27,17 +27,14 @@ class WorkersIncomeData:
         """Establishes connection to the database and returns a cursor for querying"""
         try:
             connection = psycopg2.connect(
-                database="neondb",
-                user="neondb_owner",
-                password="Gl1LUdEphgR7",
-                host="ep-late-dew-a5zxdzl8.us-east-2.aws.neon.tech",
-                port="5432"
+            database=st.PGDATABASE, user=st.PGUSER, password=st.PGPASSWORD, host=st.PGHOST, port=st.PGPORT
             )
             cursor = connection.cursor()
             return cursor, connection
         except Exception as e:
             print(f"Error connecting to database: {e}")
             return None, None
+
 
     @staticmethod
     def CreateTable():
@@ -47,21 +44,24 @@ class WorkersIncomeData:
             cursor, connection = WorkersIncomeData.GetCursor()
             if cursor and connection:
                 cursor.execute("""
-                    CREATE TABLE IF NOT EXISTS Employerinput(
+                    CREATE TABLE IF NOT EXISTS Employeroutput(
                         name varchar(300) NOT NULL,
                         id varchar(300) PRIMARY KEY NOT NULL,
                         basic_salary float NOT NULL,
-                        monthly_worked_days int NOT NULL,
-                        days_leave int NOT NULL,
-                        transportation_allowance float NOT NULL,
-                        daytime_overtime_hours int NOT NULL,
-                        nighttime_overtime_hours int NOT NULL,
-                        daytime_holiday_overtime_hours int NOT NULL,
-                        nighttime_holiday_overtime_hours int NOT NULL,
-                        sick_leave_days int NOT NULL,
-                        health_contribution_percentage float NOT NULL,
-                        pension_contribution_percentage float NOT NULL,
-                        solidarity_pension_fund_contribution_percentage float NOT NULL
+                        workdays int NOT NULL,
+                        sick_leave int NOT NULL,
+                        transportation_aid float NOT NULL,
+                        dayshift_extra_hours int NOT NULL,
+                        nightshift_extra_hours int NOT NULL,
+                        dayshift_extra_hours_holidays int NOT NULL,
+                        nightshift_extra_hours_holidays int NOT NULL,
+                        leave_days int NOT NULL,
+                        percentage_health_insurance float NOT NULL,
+                        percentage_retirement_insurance float NOT NULL,
+                        percentage_retirement_fund float NOT NULL,
+                        devengado float NOT NULL,
+                        deducido float NOT NULL,
+                        amounttopay float NOT NULL
                     );
                 """)
                 connection.commit()
@@ -70,6 +70,7 @@ class WorkersIncomeData:
         finally:
             if connection:
                 connection.close()
+
 
     
     @staticmethod
@@ -105,19 +106,22 @@ class WorkersIncomeData:
                 connection.close()
 
 
+
     @staticmethod
     def Droptable():
-        """Drop the 'Employerinput' table if it exists in the database."""
+        """Drop the 'Employeroutput' table if it exists in the database."""
         cursor, connection = None, None
         try:
             cursor, connection = WorkersIncomeData.GetCursor()
-            cursor.execute("DROP TABLE IF EXISTS Employerinput;")
-            connection.commit()
+            if cursor and connection:
+                cursor.execute("DROP TABLE IF EXISTS Employeroutput;")
+                connection.commit()
         except Exception as e:
             print(f"Error dropping table: {e}")
         finally:
             if connection:
                 connection.close()
+
 
     @staticmethod
     def DeleteWorker(NAME, ID):
@@ -141,6 +145,7 @@ class WorkersIncomeData:
         """Update a worker's data in the 'Employerinput' table."""
         cursor, connection = None, None
         try:
+            # Verifica si el atributo proporcionado para la actualización es válido
             Temployer.Employerinput.valor_presente(KEYUPDATE)
             cursor, connection = WorkersIncomeData.GetCursor()
             cursor.execute(f"""
@@ -149,6 +154,8 @@ class WorkersIncomeData:
                 WHERE name = %s AND id = %s;
             """, (VALUEUPDATE, NAME, ID))
             connection.commit()
+        except Temployer.updatenotfount as e:
+            print(f"Error updating worker: {e}")
         except Exception as e:
             if connection:
                 connection.rollback()
@@ -156,6 +163,7 @@ class WorkersIncomeData:
         finally:
             if connection:
                 connection.close()
+
 
     @staticmethod
     def QueryWorker(NAME, ID):
@@ -237,9 +245,11 @@ class WorkersIncomeData:
         cursor, connection = None, None
         try:
             cursor, connection = WorkersIncomeData.GetCursor()
+            # Verifica si todos los atributos del usuario son válidos
+            Temployer.Employerinput.Isequal(usuario)
             cursor.execute("""
                 UPDATE Employerinput
-                SET 
+                SET
                     name = %s,
                     basic_salary = %s,
                     monthly_worked_days = %s,
@@ -271,6 +281,8 @@ class WorkersIncomeData:
                 usuario.id
             ))
             connection.commit()
+        except Temployer.not_exist as e:
+            print(f"Error updating user: {e}")
         except Exception as e:
             if connection:
                 connection.rollback()
@@ -279,13 +291,15 @@ class WorkersIncomeData:
             if connection:
                 connection.close()
 
+
 # Aquí se puede añadir código para crear la tabla, insertar datos, etc.
 if __name__ == "__main__":
     WorkersIncomeData.CreateTable()
 
 
-class  WorkersoutputsData():
+class WorkersoutputsData:
     
+    @staticmethod
     def GetCursor():
         """ Establishes connection to the database and returns a cursor for querying """
         connection = psycopg2.connect(database=st.PGDATABASE, user=st.PGUSER, password=st.PGPASSWORD, host=st.PGHOST, port=st.PGPORT)
@@ -293,6 +307,7 @@ class  WorkersoutputsData():
         cursor = connection.cursor()
         return cursor
     
+    @staticmethod
     def CreateTable():
         """ Creates the user table in the database """
         try:
@@ -319,6 +334,7 @@ class  WorkersoutputsData():
         except:
             pass
 
+    @staticmethod
     def Droptable():
         """ Drop the 'Employeroutput' table if it exists in the database. """
         try:
@@ -328,27 +344,30 @@ class  WorkersoutputsData():
         except:
             pass
     
+    @staticmethod
     def PopulateTable():
-        """ Populate the 'Employeroutput' table based on the data from the 'Employerinput' table.
-
-            This function retrieves data from the 'Employerinput' table and calculates additional attributes 
-            based on the provided data. It then inserts the calculated data into the 'Employeroutput' table."""
-        cursor = WorkersoutputsData.GetCursor()
-        cursorWorkersIncomeData = WorkersIncomeData.GetCursor()
-        cursorWorkersIncomeData.execute("SELECT * FROM Employerinput")
-        employers = cursorWorkersIncomeData.fetchall()  # Obtener todas las filas
-
-        for employer in employers:
-            verificar_result_total = mp.SettlementParameters(employer[2], employer[3], employer[4], employer[5],
-                                                            employer[6], employer[7], employer[8], employer[9], employer[10],
-                                                            employer[11], employer[12], employer[13])
-            cursor.execute(
-                f"""INSERT INTO Employeroutput (name, id ,basic_salary,workdays,sick_leave,transportation_aid, 
-                                                dayshift_extra_hours,nightshift_extra_hours,dayshift_extra_hours_holidays, 
-                                                nightshift_extra_hours_holidays,leave_days,percentage_health_insurance,
-                                                percentage_retirement_insurance,percentage_retirement_fund,devengado,deducido,amounttopay)
-                    
-                        SELECT Employerinput.name,
+        """Populate the 'Employeroutput' table based on the data from the 'Employerinput' table."""
+        cursor, connection = None, None
+        try:
+            cursor, connection = WorkersoutputsData.GetCursor()
+            cursorWorkersIncomeData, _ = WorkersIncomeData.GetCursor()
+            cursorWorkersIncomeData.execute("SELECT * FROM Employerinput")
+            employers = cursorWorkersIncomeData.fetchall()
+            for employer in employers:
+                verificar_result_total = mp.SettlementParameters(
+                    employer[2], employer[3], employer[4], employer[5],
+                    employer[6], employer[7], employer[8], employer[9], employer[10],
+                    employer[11], employer[12], employer[13]
+                )
+                cursor.execute(
+                    f"""
+                    INSERT INTO Employeroutput (
+                        name, id, basic_salary, workdays, sick_leave, transportation_aid,
+                        dayshift_extra_hours, nightshift_extra_hours, dayshift_extra_hours_holidays,
+                        nightshift_extra_hours_holidays, leave_days, percentage_health_insurance,
+                        percentage_retirement_insurance, percentage_retirement_fund, devengado, deducido, amounttopay
+                    ) SELECT
+                        Employerinput.name,
                         Employerinput.id,
                         {round(calculate_salary(employer[2], employer[3], employer[4], employer[10]), 2)}, --basic_salary
                         Employerinput.monthly_worked_days,
@@ -368,6 +387,14 @@ class  WorkersoutputsData():
                     
                     FROM Employerinput where name='{employer[0]}' and id='{employer[1]}' ;""")  # Agregar una cláusula WHERE para filtrar por el id del empleador
             cursor.connection.commit()
+        except Exception as e:
+            if connection:
+                connection.rollback()
+            print(f"Error populating table: {e}")
+        finally:
+            if connection:
+                connection.close()
+
 
     def QueryWorker(NAME, ID):
         """ Query the data of a worker from the 'Employeroutput' table based on the provided name and ID. """
@@ -419,3 +446,4 @@ f"""
 15. deducido
 16. amounttopay
 """
+
