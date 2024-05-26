@@ -24,16 +24,21 @@ import src.Model.securitydb as st
 class WorkersIncomeData:
     @staticmethod
     def GetCursor():
-        """Establishes connection to the database and returns a cursor for querying"""
+        """Get a database cursor and connection"""
         try:
             connection = psycopg2.connect(
-            database=st.PGDATABASE, user=st.PGUSER, password=st.PGPASSWORD, host=st.PGHOST, port=st.PGPORT
+                database="neondb",
+                user="neondb_owner",
+                password="Gl1LUdEphgR7",
+                host="ep-late-dew-a5zxdzl8.us-east-2.aws.neon.tech",
+                port=5432
             )
             cursor = connection.cursor()
             return cursor, connection
-        except Exception as e:
-            print(f"Error connecting to database: {e}")
+        except (Exception, psycopg2.Error) as error:
+            print("Error connecting to the database:", error)
             return None, None
+
 
 
     @staticmethod
@@ -97,10 +102,10 @@ class WorkersIncomeData:
                     EMPLOYER.solidarity_pension_fund_contribution_percentage
                 ))
                 connection.commit()
-        except Exception as e:
+        except (Exception, psycopg2.Error) as error:
             if connection:
                 connection.rollback()
-            print(f"Error inserting data: {e}")
+            print(f"Error inserting data: {error}")
         finally:
             if connection:
                 connection.close()

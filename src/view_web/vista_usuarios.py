@@ -14,6 +14,12 @@ blueprint = Blueprint('vista_usuarios', __name__)
 def index():
     return render_template('inicio.html')
 
+from flask import Blueprint, render_template, request, redirect, url_for, flash
+from src.Controller.Controladortablas import WorkersIncomeData
+import src.Model.TablesEmployer as Temployer
+
+blueprint = Blueprint('vista_usuarios', __name__)
+
 @blueprint.route('/crear-usuario', methods=['GET', 'POST'])
 def crear_usuario():
     if request.method == 'POST':
@@ -62,7 +68,10 @@ def crear_usuario():
         except Exception as e:
             flash(str(e), 'danger')
 
-    return render_template('crear_usuario.html')
+    return render_template('crear-usuario.html')
+
+
+
 
 @blueprint.route('/resultado')
 def resultado():
