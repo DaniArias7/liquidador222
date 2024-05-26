@@ -2,11 +2,11 @@ import sys
 
 
 # Agregar el directorio 'src' al path para permitir importaciones relativas
-sys.path.append("liquidador_nomina/src")
+sys.path.append("C:/Users/ACER/liquidador_nomina")
 sys.path.append("./src")
 
-from Model.MonthlyPaymentLogic import *
-import Model.MonthlyPaymentLogic as mp
+from src.Model.MonthlyPaymentLogic import *
+import src.Model.MonthlyPaymentLogic as mp
 
 print(f"""
 El propósito del programa es calcular el salario mensual de un empleado 
@@ -91,3 +91,4 @@ try :
 
 except Exception as the_exception:
     print(f"Ha ocurrido un error; no se puede continuar; el error que hay es el siguiente: {the_exception}")
+

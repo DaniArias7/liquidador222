@@ -9,140 +9,259 @@ project_dir = os.path.abspath(os.path.join(current_dir, ".."))
 # Obtener la ruta del directorio del modelo
 model_dir = os.path.join(project_dir, "Model")
 
-
 # Agregar la ruta del directorio principal del proyecto y del modelo al sys.path
 sys.path.append(project_dir)
 sys.path.append(model_dir)
+sys.path.append("C:/Users/ACER/liquidador_nomina")
+sys.path.append("./src")
 
 # Importaciones
-from Model.MonthlyPaymentLogic import *
-import Model.MonthlyPaymentLogic as mp
-import Model.TablesEmployer as Temployer
-import Model.securitydb as st
-
+from src.Model.MonthlyPaymentLogic import *
+import src.Model.MonthlyPaymentLogic as mp
+import src.Model.TablesEmployer as Temployer
+import src.Model.securitydb as st
 
 class WorkersIncomeData:
-
+    @staticmethod
     def GetCursor():
-        """ Establishes connection to the database and returns a cursor for querying """
-        connection = psycopg2.connect(database=st.PGDATABASE, user=st.PGUSER, password=st.PGPASSWORD, host=st.PGHOST, port=st.PGPORT)
-        # All statements are executed through a cursor
+        """Establishes connection to the database and returns a cursor for querying"""
+        connection = psycopg2.connect(
+            database="neondb", 
+            user="neondb_owner", 
+            password="Gl1LUdEphgR7", 
+            host="ep-late-dew-a5zxdzl8.us-east-2.aws.neon.tech", 
+            port="5432"
+        )
         cursor = connection.cursor()
-        return cursor
+        return cursor, connection
     
+    @staticmethod
     def CreateTable():
         """ Creates the user table in the database """
+        cursor, connection = None, None
         try:
-            cursor =  WorkersIncomeData.GetCursor()
-            cursor.execute("""CREATE TABLE Employerinput(
-                        name varchar(300)  NOT NULL,
-                        id varchar(300) PRIMARY KEY NOT NULL,
-                        basic_salary float  NOT NULL , 
-                        monthly_worked_days int  NOT NULL, 
-                        days_leave int  NOT NULL, 
-                        transportation_allowance float  NOT NULL,
-                        daytime_overtime_hours int  NOT NULL, 
-                        nighttime_overtime_hours int  NOT NULL, 
-                        daytime_holiday_overtime_hours int  NOT NULL,
-                        nighttime_holiday_overtime_hours int  NOT NULL, 
-                        sick_leave_days int  NOT NULL, 
-                        health_contribution_percentage float  NOT NULL,
-                        pension_contribution_percentage float  NOT NULL, 
-                        solidarity_pension_fund_contribution_percentage float NOT NULL ); """)
-            cursor.connection.commit()
-        except:
-            pass
+            cursor, connection = WorkersIncomeData.GetCursor()
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS Employerinput(
+                    name varchar(300) NOT NULL,
+                    id varchar(300) PRIMARY KEY NOT NULL,
+                    basic_salary float NOT NULL, 
+                    monthly_worked_days int NOT NULL, 
+                    days_leave int NOT NULL, 
+                    transportation_allowance float NOT NULL,
+                    daytime_overtime_hours int NOT NULL, 
+                    nighttime_overtime_hours int NOT NULL, 
+                    daytime_holiday_overtime_hours int NOT NULL,
+                    nighttime_holiday_overtime_hours int NOT NULL, 
+                    sick_leave_days int NOT NULL, 
+                    health_contribution_percentage float NOT NULL,
+                    pension_contribution_percentage float NOT NULL, 
+                    solidarity_pension_fund_contribution_percentage float NOT NULL
+                );
+            """)
+            connection.commit()
+        except Exception as e:
+            print(f"Error creating table: {e}")
+        finally:
+            if connection:
+                connection.close()
     
+    @staticmethod
+    def Insert(employer):
+        """Insert an employer's data into the 'Employerinput' table."""
+        cursor, connection = None, None
+        try:
+            cursor, connection = WorkersIncomeData.GetCursor()
+            cursor.execute("""
+                INSERT INTO Employerinput (
+                    name, id, basic_salary, monthly_worked_days, days_leave, 
+                    transportation_allowance, daytime_overtime_hours, nighttime_overtime_hours, 
+                    daytime_holiday_overtime_hours, nighttime_holiday_overtime_hours, sick_leave_days, 
+                    health_contribution_percentage, pension_contribution_percentage, 
+                    solidarity_pension_fund_contribution_percentage
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+            """, (
+                employer.name, employer.id, employer.basic_salary, employer.monthly_worked_days, 
+                employer.days_leave, employer.transportation_allowance, employer.daytime_overtime_hours, 
+                employer.nighttime_overtime_hours, employer.daytime_holiday_overtime_hours, 
+                employer.nighttime_holiday_overtime_hours, employer.sick_leave_days, 
+                employer.health_contribution_percentage, employer.pension_contribution_percentage, 
+                employer.solidarity_pension_fund_contribution_percentage
+            ))
+            connection.commit()
+        except Exception as e:
+            connection.rollback()
+            print(f"Error inserting data: {e}")
+        finally:
+            if connection:
+                connection.close()
     
+    @staticmethod
     def Droptable():
-        """
-        Drop the 'Employerinput' table if it exists in the database.
-
-        This function attempts to drop the table 'Employerinput' from the database. 
-        If the table does not exist or any error occurs during the execution, it is ignored.
-        """
+        """Drop the 'Employerinput' table if it exists in the database."""
+        cursor, connection = None, None
         try:
-            cursor=WorkersIncomeData.GetCursor()
-            cursor.execute(""" DROP TABLE Employerinput""")
-            cursor.connection.commit()
-        except:
-            pass
+            cursor, connection = WorkersIncomeData.GetCursor()
+            cursor.execute("DROP TABLE IF EXISTS Employerinput;")
+            connection.commit()
+        except Exception as e:
+            print(f"Error dropping table: {e}")
+        finally:
+            if connection:
+                connection.close()
     
-    def Insert(EMPLOYER: Temployer.Employerinput):
-        """  Insert an employer's data into the 'Employerinput' table."""
+    @staticmethod
+    def DeleteWorker(NAME, ID):
+        """Delete a worker from the 'Employerinput' table based on the provided name and ID."""
+        cursor, connection = None, None
         try:
-            cursor =  WorkersIncomeData.GetCursor()
-            Temployer.Employerinput.primary_key(EMPLOYER.name,EMPLOYER.id, WorkersIncomeData)
-            Temployer.Employerinput.notexist(EMPLOYER)
-            cursor.execute(f""" INSERT INTO Employerinput  (name, id, basic_salary, monthly_worked_days, 
-                                days_leave, transportation_allowance, daytime_overtime_hours, nighttime_overtime_hours, 
-                                daytime_holiday_overtime_hours, nighttime_holiday_overtime_hours,
-                                sick_leave_days, health_contribution_percentage, pension_contribution_percentage, 
-                                solidarity_pension_fund_contribution_percentage)
-                                VALUES 
-                                ('{EMPLOYER.name}', '{EMPLOYER.id}' ,{EMPLOYER.basic_salary},{EMPLOYER.monthly_worked_days}, 
-                                {EMPLOYER.days_leave},{EMPLOYER.transportation_allowance}, {EMPLOYER.daytime_overtime_hours}, {EMPLOYER.nighttime_overtime_hours}, 
-                                {EMPLOYER.daytime_holiday_overtime_hours},{EMPLOYER.nighttime_holiday_overtime_hours},
-                                {EMPLOYER.sick_leave_days}, {EMPLOYER.health_contribution_percentage},{EMPLOYER.pension_contribution_percentage},
-                                {EMPLOYER.solidarity_pension_fund_contribution_percentage});""")
-            cursor.connection.commit()
-        except Temployer.faileprimarykey as error_primaey_key:
-            cursor.connection.rollback()
-        
-        except Temployer.not_exist as error_not_exist:
-            cursor.connection.rollback()
+            cursor, connection = WorkersIncomeData.GetCursor()
+            cursor.execute("""
+                DELETE FROM Employerinput
+                WHERE name = %s AND id = %s;
+            """, (NAME, ID))
+            connection.commit()
+        except Exception as e:
+            print(f"Error deleting worker: {e}")
+        finally:
+            if connection:
+                connection.close()
     
-    
-    
-    def DeleteWorker(NAME,ID):
-        """  Delete a worker from the 'Employerinput' table based on the provided name and ID. """
-        cursor =  WorkersIncomeData.GetCursor() 
-        cursor.execute(f""" DELETE 
-                        FROM Employerinput
-                        WHERE name= '{NAME}' AND id='{ID}'; 
-                        """)
-        cursor.connection.commit() 
-    
-    def Update(NAME,ID,KEYUPDATE,VALUEUPDATE):
-        """ Update a worker's data in the 'Employerinput' table."""
+    @staticmethod
+    def Update(NAME, ID, KEYUPDATE, VALUEUPDATE):
+        """Update a worker's data in the 'Employerinput' table."""
+        cursor, connection = None, None
         try:
             Temployer.Employerinput.valor_presente(KEYUPDATE)
-            cursor =  WorkersIncomeData.GetCursor()
-            cursor.execute(f""" UPDATE Employerinput
-                            SET {KEYUPDATE} = {VALUEUPDATE}
-                            WHERE name= '{NAME}' AND id='{ID}'; 
-                            """)
-            cursor.connection.commit()
-        except Temployer.updatenotfount:
-            #cursor.connection.rollback()
-            pass
+            cursor, connection = WorkersIncomeData.GetCursor()
+            cursor.execute(f"""
+                UPDATE Employerinput
+                SET {KEYUPDATE} = %s
+                WHERE name = %s AND id = %s;
+            """, (VALUEUPDATE, NAME, ID))
+            connection.commit()
+        except Exception as e:
+            print(f"Error updating worker: {e}")
+        finally:
+            if connection:
+                connection.close()
 
+    @staticmethod
     def QueryWorker(NAME, ID):
-        """ Query the data of a worker from the 'Employerinput' table based on the provided name and ID. """
-        cursor = WorkersIncomeData.GetCursor()
-        cursor.execute(f"""SELECT *
-                        FROM Employerinput
-                        WHERE NAME = '{NAME}' AND id = '{ID}';""")
-        fila = cursor.fetchone()
-        if fila is not None: 
-            result = Temployer.Employerinput(name=fila[0],
-                                            id=fila[1],
-                                            basic_salary=fila[2],
-                                            monthly_worked_days=fila[3],
-                                            days_leave=fila[4],
-                                            transportation_allowance=fila[5],
-                                            daytime_overtime_hours=fila[6],
-                                            nighttime_overtime_hours=fila[7],
-                                            daytime_holiday_overtime_hours=fila[8],
-                                            nighttime_holiday_overtime_hours=fila[9],
-                                            sick_leave_days=fila[10],
-                                            health_contribution_percentage=fila[11],
-                                            pension_contribution_percentage=fila[12],
-                                            solidarity_pension_fund_contribution_percentage=fila[13])
-            return result
-        else:
-            return None  
+        """Query the data of a worker from the 'Employerinput' table based on the provided name and ID."""
+        cursor, connection = None, None
+        try:
+            cursor, connection = WorkersIncomeData.GetCursor()
+            cursor.execute("""
+                SELECT * FROM Employerinput
+                WHERE name = %s AND id = %s;
+            """, (NAME, ID))
+            fila = cursor.fetchone()
+            if fila is not None:
+                result = Temployer.Employerinput(
+                    name=fila[0],
+                    id=fila[1],
+                    basic_salary=fila[2],
+                    monthly_worked_days=fila[3],
+                    days_leave=fila[4],
+                    transportation_allowance=fila[5],
+                    daytime_overtime_hours=fila[6],
+                    nighttime_overtime_hours=fila[7],
+                    daytime_holiday_overtime_hours=fila[8],
+                    nighttime_holiday_overtime_hours=fila[9],
+                    sick_leave_days=fila[10],
+                    health_contribution_percentage=fila[11],
+                    pension_contribution_percentage=fila[12],
+                    solidarity_pension_fund_contribution_percentage=fila[13]
+                )
+                return result
+            else:
+                return None
+        except Exception as e:
+            print(f"Error querying worker: {e}")
+        finally:
+            if connection:
+                connection.close()
 
+    @staticmethod
+    def buscar_usuario_por_nombre(nombre):
+        """Busca un usuario por nombre en la tabla 'Employerinput'."""
+        cursor, connection = None, None
+        try:
+            cursor, connection = WorkersIncomeData.GetCursor()
+            cursor.execute("""
+                SELECT * FROM Employerinput
+                WHERE name = %s;
+            """, (nombre,))
+            fila = cursor.fetchone()
+            if fila:
+                usuario = Temployer.Employerinput(
+                    name=fila[0],
+                    id=fila[1],
+                    basic_salary=fila[2],
+                    monthly_worked_days=fila[3],
+                    days_leave=fila[4],
+                    transportation_allowance=fila[5],
+                    daytime_overtime_hours=fila[6],
+                    nighttime_overtime_hours=fila[7],
+                    daytime_holiday_overtime_hours=fila[8],
+                    nighttime_holiday_overtime_hours=fila[9],
+                    sick_leave_days=fila[10],
+                    health_contribution_percentage=fila[11],
+                    pension_contribution_percentage=fila[12],
+                    solidarity_pension_fund_contribution_percentage=fila[13]
+                )
+                return usuario
+            else:
+                return None
+        except Exception as e:
+            print(f"Error searching user by name: {e}")
+        finally:
+            if connection:
+                connection.close()
+
+    @staticmethod
+    def actualizar_usuario(usuario):
+        """Actualiza un usuario en la tabla 'Employerinput'."""
+        cursor, connection = None, None
+        try:
+            cursor, connection = WorkersIncomeData.GetCursor()
+            cursor.execute("""
+                UPDATE Employerinput
+                SET 
+                    name = %s,
+                    basic_salary = %s, 
+                    monthly_worked_days = %s, 
+                    days_leave = %s, 
+                    transportation_allowance = %s,
+                    daytime_overtime_hours = %s, 
+                    nighttime_overtime_hours = %s, 
+                    daytime_holiday_overtime_hours = %s,
+                    nighttime_holiday_overtime_hours = %s, 
+                    sick_leave_days = %s, 
+                    health_contribution_percentage = %s,
+                    pension_contribution_percentage = %s, 
+                    solidarity_pension_fund_contribution_percentage = %s
+                WHERE id = %s;
+            """, (
+                usuario.name, usuario.basic_salary, usuario.monthly_worked_days, 
+                usuario.days_leave, usuario.transportation_allowance, usuario.daytime_overtime_hours, 
+                usuario.nighttime_overtime_hours, usuario.daytime_holiday_overtime_hours, 
+                usuario.nighttime_holiday_overtime_hours, usuario.sick_leave_days, 
+                usuario.health_contribution_percentage, usuario.pension_contribution_percentage, 
+                usuario.solidarity_pension_fund_contribution_percentage, usuario.id
+            ))
+            connection.commit()
+        except Exception as e:
+            connection.rollback()
+            print(f"Error updating user: {e}")
+        finally:
+            if connection:
+                connection.close()
+
+
+# Crear la tabla al iniciar el script
+WorkersIncomeData.CreateTable()
 
 
 class  WorkersoutputsData():

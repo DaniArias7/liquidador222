@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Descripción - Liquidador de Nómina{% endblock %}
+
+{% block content %}
+<h1>Descripción del Proyecto</h1>
+
+<p>
+    El propósito del programa es calcular el salario mensual de un empleado considerando diferentes variables como el salario básico, días laborados, días de licencia, y días de incapacidad, entre otros.
+</p>
+
+<p>
+    Para llevar a cabo este cálculo, se utilizan varias constantes:
+</p>
+
+<ul>
+    <li>El salario mínimo legal en Colombia es de ${{ MINIMUM_WAGE }}.</li>
+    <li>La Unidad de Valor Tributario (UVT) tiene un valor de ${{ UVT }}.</li>
+    <li>Coeficientes para calcular el pago de horas extras en diferentes situaciones:
+        <ul>
+            <li>Horas extras diurnas: {{ EXTRA_HOUR_DAYSHIFT }}</li>
+            <li>Horas extras nocturnas: {{ EXTRA_HOUR_NIGHTSHIFT }}</li>
+            <li>Horas extras diurnas en días festivos: {{ EXTRA_HOUR_DAYSHIFT_HOLIDAYS }}</li>
+            <li>Horas extras nocturnas en días festivos: {{ EXTRA_HOUR_NIGHTSHIFT_HOLIDAYS }}</li>
+        </ul>
+    </li>
+    <li>El número de días y horas en un mes se establece en {{ MONTH_DAYS }} días y {{ MONTH_HOURS }} horas.</li>
+    <li>Porcentajes utilizados para calcular contribuciones de seguro de salud, aportes a pensiones, fondos de retiro y licencias por enfermedad:
+        <ul>
+            <li>Porcentaje de seguro de salud y aportes a pensiones: {{ PERCENTAGE_HEALTH_INSURANCE * 100 }}%</li>
+            <li>Porcentaje de fondo de retiro: {{ PERCENTAGE_RETIREMENT_FUND * 100 }}%</li>
+        </ul>
+    </li>
+    <li>Una lista que define los porcentajes de retención salarial en función del salario en UVT.</li>
+</ul>
+{% endblock %}
