@@ -5,9 +5,10 @@ blueprint = Blueprint("vista_usuarios", __name__, "templates")
 import sys
 sys.path.append("C:/Users/ACER/liquidador_nomina")
 sys.path.append("./src")
-from src.Controller.Controladortablas import WorkersIncomeData, WorkersoutputsData
-from src.Model.MonthlyPaymentLogic import SettlementParameters, calculate_settlement
-import src.Model.TablesEmployer as Temployer
+from Controller.Controladortablas import WorkersIncomeData, WorkersoutputsData
+from Model.MonthlyPaymentLogic import SettlementParameters, calculate_settlement
+from Model.TablesEmployer import Employerinput
+import Model.TablesEmployer as Temployer
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
 # Definir la clase NuevoEmpleado
@@ -33,35 +34,37 @@ class NuevoEmpleado:
 def home():
     return render_template('inicio.html')
 
-@blueprint.route('/crear-usuario', methods=['GET', 'POST'])
+@blueprint.route('/crear-usuario')
 def crear_usuario():
-    if request.method == 'POST':
-        # Obtener los datos del formulario
-        name = request.form.get('name')
-        basic_salary = request.form.get('basic_salary')
-        workdays = request.form.get('workdays')
-        sick_leave = request.form.get('sick_leave')
-        transportation_aid = request.form.get('transportation_aid')
-        dayshift_extra_hours = request.form.get('dayshift_extra_hours')
-        nightshift_extra_hours = request.form.get('nightshift_extra_hours')
-        dayshift_extra_hours_holidays = request.form.get('dayshift_extra_hours_holidays')
-        nightshift_extra_hours_holidays = request.form.get('nightshift_extra_hours_holidays')
-        leave_days = request.form.get('leave_days')
-        percentage_health_insurance = request.form.get('percentage_health_insurance')
-        percentage_retirement_insurance = request.form.get('percentage_retirement_insurance')
-        percentage_retirement_fund = request.form.get('percentage_retirement_fund')
 
-        # Crear una instancia de NuevoEmpleado con los datos del formulario
-        nuevo_empleado = NuevoEmpleado(name=name, basic_salary=basic_salary, workdays=workdays, sick_leave=sick_leave, transportation_aid=transportation_aid, dayshift_extra_hours=dayshift_extra_hours, nightshift_extra_hours=nightshift_extra_hours, dayshift_extra_hours_holidays=dayshift_extra_hours_holidays, nightshift_extra_hours_holidays=nightshift_extra_hours_holidays, leave_days=leave_days, percentage_health_insurance=percentage_health_insurance, percentage_retirement_insurance=percentage_retirement_insurance, percentage_retirement_fund=percentage_retirement_fund)
+    # Obtener los datos del formulario
+    nombre = request.args['nombre']
+    cedula = request.args['cedula']
+    salario = request.args['salario']
+    Días_Trabajados = request.args['Días_Trabajados']
+    Días_enfermedad = request.args['Días_enfermedad']
+    Auxilio_Trasporte = request.args['Auxilio_Trasporte']
+    Horas_diurnas_extra = request.args['Horas_diurnas_extra']
+    Horas_nocturnas_extra = request.args['Horas_nocturnas_extra']
+    Horas_diurnas_extra_festivo = request.args['Horas_diurnas_extra_festivo']
+    Horas_nocturnas_extra_festivo = request.args['Horas_nocturnas_extra_festivo']
+    Días_Libres = request.args['Días_Libres']
+    Porcentaje_seguro_salud = request.args['Porcentaje_seguro_salud']
+    Porcentaje_fondo_retiro = request.args['Porcentaje_retiro']
+    Porcentaje_fondo_solidario = request.args['percentage_retirement_fund']
 
-        # Insertar el nuevo empleado en la base de datos
-        WorkersIncomeData.Insert(nuevo_empleado)
+    # Crear una instancia de NuevoEmpleado con los datos del formulario
+    nuevo_empleado = Employerinput(nombre=nombre, cedula=cedula, salario=salario, Días_Trabajados=Días_Trabajados, Días_enfermedad=Días_enfermedad, Auxilio_Trasporte=Auxilio_Trasporte,
+                Horas_diurnas_extra=Horas_diurnas_extra, Horas_nocturnas_extra=Horas_nocturnas_extra, Horas_diurnas_extra_festivo=Horas_diurnas_extra_festivo,
+                Horas_nocturnas_extra_festivo=Horas_nocturnas_extra_festivo, Días_Libres=Días_Libres, Porcentaje_seguro_salud=Porcentaje_seguro_salud,
+                Porcentaje_fondo_retiro=Porcentaje_fondo_retiro, Porcentaje_fondo_solidario=Porcentaje_fondo_solidario)
+
+    # Insertar el nuevo empleado en la base de datos
+    WorkersIncomeData.Insert(nuevo_empleado)
 
         # Redirigir al usuario a la página de resultado después de insertar los datos
-        return redirect(url_for('vista_usuarios.resultado'))
+    return redirect(url_for('vista_usuarios.resultado'))
 
-    # Si el método es GET o si se procesaron los datos del formulario, renderizar el formulario
-    return render_template('crear_usuario.html')
 
 @blueprint.route('/resultado')
 def resultado():
