@@ -2,6 +2,7 @@
 # la clase request permite acceso a la información de la petición HTTP
 from flask import Flask  
 
+
 import sys
 import os
 
@@ -15,6 +16,8 @@ app.secret_key = "supersecretkey"
 
 app.register_blueprint(vista_usuarios.blueprint )
 
+
 # Esta linea permite que nuestra aplicación se ejecute individualmente
 if __name__=='__main__':
    app.run( debug=True )
+

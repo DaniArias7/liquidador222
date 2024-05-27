@@ -1,140 +1,91 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, Blueprint
+
+blueprint = Blueprint("vista_usuarios", __name__, "templates")
+
 import sys
-import uuid
 sys.path.append("C:/Users/ACER/liquidador_nomina")
 sys.path.append("./src")
 from src.Controller.Controladortablas import WorkersIncomeData, WorkersoutputsData
 from src.Model.MonthlyPaymentLogic import SettlementParameters, calculate_settlement
 import src.Model.TablesEmployer as Temployer
-from flask import Blueprint, request, redirect, url_for, render_template, flash
+app = Flask(__name__)
+app.secret_key = "supersecretkey"
+# Definir la clase NuevoEmpleado
+class NuevoEmpleado:
+    def __init__(self, name, basic_salary, workdays, sick_leave, transportation_aid, dayshift_extra_hours, nightshift_extra_hours, dayshift_extra_hours_holidays, nightshift_extra_hours_holidays, leave_days, percentage_health_insurance, percentage_retirement_insurance, percentage_retirement_fund, id=None):
+        self.id = id
+        self.name = name
+        self.basic_salary = basic_salary
+        self.workdays = workdays
+        self.sick_leave = sick_leave
+        self.transportation_aid = transportation_aid
+        self.dayshift_extra_hours = dayshift_extra_hours
+        self.nightshift_extra_hours = nightshift_extra_hours
+        self.dayshift_extra_hours_holidays = dayshift_extra_hours_holidays
+        self.nightshift_extra_hours_holidays = nightshift_extra_hours_holidays
+        self.leave_days = leave_days
+        self.percentage_health_insurance = percentage_health_insurance
+        self.percentage_retirement_insurance = percentage_retirement_insurance
+        self.percentage_retirement_fund = percentage_retirement_fund
 
-blueprint = Blueprint('vista_usuarios', __name__)
-
-@blueprint.route('/')
-def index():
+# Definir las rutas y las funciones asociadas
+@blueprint.route("/")
+def home():
     return render_template('inicio.html')
-
-from flask import Blueprint, render_template, request, redirect, url_for, flash
-from src.Controller.Controladortablas import WorkersIncomeData
-import src.Model.TablesEmployer as Temployer
-
-blueprint = Blueprint('vista_usuarios', __name__)
 
 @blueprint.route('/crear-usuario', methods=['GET', 'POST'])
 def crear_usuario():
     if request.method == 'POST':
-        name = request.form['name']
-        id = request.form['id']
-        basic_salary = float(request.form['basic_salary'])
-        monthly_worked_days = int(request.form['monthly_worked_days'])
-        days_leave = int(request.form['days_leave'])
-        transportation_allowance = float(request.form['transportation_allowance'])
-        daytime_overtime_hours = int(request.form['daytime_overtime_hours'])
-        nighttime_overtime_hours = int(request.form['nighttime_overtime_hours'])
-        daytime_holiday_overtime_hours = int(request.form['daytime_holiday_overtime_hours'])
-        nighttime_holiday_overtime_hours = int(request.form['nighttime_holiday_overtime_hours'])
-        sick_leave_days = int(request.form['sick_leave_days'])
-        health_contribution_percentage = float(request.form['health_contribution_percentage'])
-        pension_contribution_percentage = float(request.form['pension_contribution_percentage'])
-        solidarity_pension_fund_contribution_percentage = float(request.form['solidarity_pension_fund_contribution_percentage'])
+        # Obtener los datos del formulario
+        name = request.form.get('name')
+        basic_salary = request.form.get('basic_salary')
+        workdays = request.form.get('workdays')
+        sick_leave = request.form.get('sick_leave')
+        transportation_aid = request.form.get('transportation_aid')
+        dayshift_extra_hours = request.form.get('dayshift_extra_hours')
+        nightshift_extra_hours = request.form.get('nightshift_extra_hours')
+        dayshift_extra_hours_holidays = request.form.get('dayshift_extra_hours_holidays')
+        nightshift_extra_hours_holidays = request.form.get('nightshift_extra_hours_holidays')
+        leave_days = request.form.get('leave_days')
+        percentage_health_insurance = request.form.get('percentage_health_insurance')
+        percentage_retirement_insurance = request.form.get('percentage_retirement_insurance')
+        percentage_retirement_fund = request.form.get('percentage_retirement_fund')
 
-        # Crear una instancia de Employerinput
-        employer = Temployer.Employerinput(
-            name=name,
-            id=id,
-            basic_salary=basic_salary,
-            monthly_worked_days=monthly_worked_days,
-            days_leave=days_leave,
-            transportation_allowance=transportation_allowance,
-            daytime_overtime_hours=daytime_overtime_hours,
-            nighttime_overtime_hours=nighttime_overtime_hours,
-            daytime_holiday_overtime_hours=daytime_holiday_overtime_hours,
-            nighttime_holiday_overtime_hours=nighttime_holiday_overtime_hours,
-            sick_leave_days=sick_leave_days,
-            health_contribution_percentage=health_contribution_percentage,
-            pension_contribution_percentage=pension_contribution_percentage,
-            solidarity_pension_fund_contribution_percentage=solidarity_pension_fund_contribution_percentage
-        )
+        # Crear una instancia de NuevoEmpleado con los datos del formulario
+        nuevo_empleado = NuevoEmpleado(name=name, basic_salary=basic_salary, workdays=workdays, sick_leave=sick_leave, transportation_aid=transportation_aid, dayshift_extra_hours=dayshift_extra_hours, nightshift_extra_hours=nightshift_extra_hours, dayshift_extra_hours_holidays=dayshift_extra_hours_holidays, nightshift_extra_hours_holidays=nightshift_extra_hours_holidays, leave_days=leave_days, percentage_health_insurance=percentage_health_insurance, percentage_retirement_insurance=percentage_retirement_insurance, percentage_retirement_fund=percentage_retirement_fund)
 
-        try:
-            # Verificar si el usuario ya existe en la base de datos
-            Temployer.Employerinput.primary_key(name, id, WorkersIncomeData)
-            # Insertar el usuario en la base de datos
-            WorkersIncomeData.Insert(employer)
-            flash('Usuario creado correctamente.', 'success')
-            return redirect(url_for('vista_usuarios.index'))
-        except Temployer.faileprimarykey as e:
-            flash(str(e), 'danger')
-        except Exception as e:
-            flash(str(e), 'danger')
+        # Insertar el nuevo empleado en la base de datos
+        WorkersIncomeData.Insert(nuevo_empleado)
 
-    return render_template('crear-usuario.html')
+        # Redirigir al usuario a la página de resultado después de insertar los datos
+        return redirect(url_for('vista_usuarios.resultado'))
 
-
-
+    # Si el método es GET o si se procesaron los datos del formulario, renderizar el formulario
+    return render_template('crear_usuario.html')
 
 @blueprint.route('/resultado')
 def resultado():
+    # Aquí puedes incluir el código para mostrar los resultados después de procesar los datos
     return render_template('resultado.html')
 
-@blueprint.route('/buscar-usuario', methods=['GET', 'POST'])
+@blueprint.route("/buscar_usuario")
 def buscar_usuario():
-    if request.method == 'POST':
-        nombre = request.form['buscar_nombre']
-        usuario = WorkersIncomeData.buscar_usuario_por_nombre(nombre)
-        if usuario:
-            return render_template('resultado_busqueda.html', usuario=usuario)
-        else:
-            flash("Usuario no encontrado", "error")
-            return redirect(url_for('vista_usuarios.buscar_usuario'))
-
+    # Aquí podrías manejar la lógica para buscar un usuario
     return render_template('buscar_usuario.html')
 
-@blueprint.route('/actualizar-informacion', methods=['GET', 'POST'])
-def actualizar_informacion():
-    if request.method == 'POST':
-        modificar_nombre = request.form['modificar_nombre']
-        nuevo_nombre = request.form['nuevo_nombre']
-        usuario = WorkersIncomeData.buscar_usuario_por_nombre(modificar_nombre)
-        if usuario:
-            usuario.name = nuevo_nombre
-            try:
-                WorkersIncomeData.actualizar_usuario(usuario)
-                flash("Usuario actualizado exitosamente", "success")
-            except Exception as e:
-                flash(f"Error al actualizar usuario: {str(e)}", "error")
-            return redirect(url_for('vista_usuarios.resultado_actualizacion'))
-        else:
-            flash("Usuario no encontrado", "error")
-            return redirect(url_for('vista_usuarios.actualizar_informacion'))
-
+@blueprint.route("/actualizar_usuario")
+def modificar_usuario():
+    # Aquí podrías manejar la lógica para modificar un usuario
     return render_template('actualizar_usuario.html')
 
-@blueprint.route('/eliminar-usuario', methods=['GET', 'POST'])
+@blueprint.route("/eliminar_usuario")
 def eliminar_usuario():
-    if request.method == 'POST':
-        eliminar_nombre = request.form['eliminar_nombre']
-        eliminar_apellido = request.form['eliminar_apellido']
-        exito = WorkersIncomeData.eliminar_usuario_por_nombre_apellido(eliminar_nombre, eliminar_apellido)
-        if exito:
-            flash("Usuario eliminado exitosamente", "success")
-            return redirect(url_for('vista_usuarios.resultado_eliminacion'))
-        else:
-            flash("Usuario no encontrado", "error")
-            return redirect(url_for('vista_usuarios.eliminar_usuario'))
-
+    # Aquí podrías manejar la lógica para eliminar un usuario
     return render_template('eliminar_usuario.html')
 
-@blueprint.route('/resultado_busqueda')
-def resultado_busqueda():
-    nombre = request.args.get('nombre')
-    usuario = WorkersIncomeData.buscar_usuario_por_nombre(nombre)
-    return render_template('resultado_busqueda.html', usuario=usuario)
+# Registrar el blueprint en la aplicación Flask
+app.register_blueprint(blueprint)
 
-@blueprint.route('/resultado_actualizacion')
-def resultado_actualizacion():
-    return render_template('resultado_actualizacion.html')
-
-@blueprint.route('/resultado_eliminacion')
-def resultado_eliminacion():
-    return render_template('resultado_eliminacion.html')
+# Ejecutar la aplicación
+if __name__ == "__main__":
+    app.run(debug=True)
