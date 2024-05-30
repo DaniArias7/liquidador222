@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Calcular Liquidación</h1>
+    <form action="{{ url_for('vista_usuarios.mostrar_resultado_liquidacion') }}" method="post">
+        <label for="nombre">Nombre del Empleado:</label>
+        <input type="text" id="nombre" name="nombre" required><br><br>
+        <label for="cedula">Cédula del Empleado:</label>
+        <input type="text" id="cedula" name="cedula" required><br><br>
+        <input type="submit" value="Calcular Liquidación">
+    </form>
+</div>
+{% endblock %}

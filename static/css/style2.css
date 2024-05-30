@@ -1,0 +1,30 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Esto centra verticalmente el contenido */
+    margin: 0; /* Elimina el margen predeterminado del cuerpo */
+}
+
+.content {
+    text-align: center; /* Centra horizontalmente el contenido */
+}
+
+.container {
+    text-align: center;
+    margin-top: 50px;
+}
+.button {
+    display: inline-block;
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    color: white;
+    background-color: #007BFF;
+    border-radius: 5px;
+}
+.button:hover {
+    background-color: #0056b3;
+}

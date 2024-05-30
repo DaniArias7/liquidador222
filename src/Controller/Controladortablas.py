@@ -9,17 +9,19 @@ project_dir = os.path.abspath(os.path.join(current_dir, ".."))
 # Obtener la ruta del directorio del modelo
 model_dir = os.path.join(project_dir, "Model")
 
+
 # Agregar la ruta del directorio principal del proyecto y del modelo al sys.path
 sys.path.append(project_dir)
 sys.path.append(model_dir)
 sys.path.append("C:/Users/ACER/liquidador_nomina")
 sys.path.append("./src")
 
+
 # Importaciones
-from Model.MonthlyPaymentLogic import *
-import Model.MonthlyPaymentLogic as mp
-import Model.TablesEmployer as Temployer
-import Model.securitydb as st
+from src.Model.MonthlyPaymentLogic import *
+import src.Model.MonthlyPaymentLogic as mp
+import src.Model.TablesEmployer as Temployer
+import src.Model.securitydb as st
 
 
 class WorkersIncomeData:
@@ -121,12 +123,15 @@ class WorkersIncomeData:
     def QueryWorker(NAME, ID):
         """ Query the data of a worker from the 'Employerinput' table based on the provided name and ID. """
         cursor = WorkersIncomeData.GetCursor()
-        cursor.execute(f"""SELECT *
-                        FROM Employerinput
-                        WHERE NAME = '{NAME}' AND id = '{ID}';""")
+        cursor.execute(f"""SELECT * FROM Employerinput WHERE NAME = '{NAME}' AND id = '{ID}';""")
         fila = cursor.fetchone()
-        if fila is not None: 
-            result = Temployer.Employerinput(name=fila[0],
+
+# Ahora la variable 'fila' contiene el resultado de la consulta
+
+        if fila is None:
+            return None
+        else:
+            result = Temployer.Employerinput(name=fila[0], 
                                             id=fila[1],
                                             basic_salary=fila[2],
                                             monthly_worked_days=fila[3],
@@ -141,11 +146,8 @@ class WorkersIncomeData:
                                             pension_contribution_percentage=fila[12],
                                             solidarity_pension_fund_contribution_percentage=fila[13])
             return result
-        else:
-            return None  
-
-
-
+        
+        
 class  WorkersoutputsData():
     
     def GetCursor():
@@ -233,12 +235,15 @@ class  WorkersoutputsData():
 
     def QueryWorker(NAME, ID):
         """ Query the data of a worker from the 'Employeroutput' table based on the provided name and ID. """
-        try:
-            cursor = WorkersIncomeData.GetCursor()
-            cursor.execute(f"""SELECT *
-                            FROM Employeroutput
-                            WHERE NAME = '{NAME}' AND id = '{ID}';""")
-            fila = cursor.fetchone()
+        cursor = WorkersIncomeData.GetCursor()
+        cursor.execute(f"""SELECT * FROM Employeroutput WHERE NAME = '{NAME}' AND id = '{ID}';""")
+        fila = cursor.fetchone()
+
+            # Ahora la variable 'fila' contiene el resultado de la consulta
+
+        if fila is None:
+            return None
+        else:
             Temployer.Employeroutput.employernotfound(fila)
             result = Temployer.Employeroutput(name=fila[0], 
                                                 id=fila[1],
@@ -258,8 +263,7 @@ class  WorkersoutputsData():
                                                 deducido=fila[15],
                                                 amounttopay=fila[16])
             return result
-        except Temployer.not_found as ds:
-            pass
+
 
 
 f"""
@@ -279,5 +283,5 @@ f"""
 13. percentage_retirement_fund
 14. devengado
 15. deducido
-16. amounttopay
+16. amounttopay
 """

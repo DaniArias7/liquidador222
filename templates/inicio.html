@@ -4,33 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>INICIO PÁGINA</title>
-    <style>
-        .container {
-            text-align: center;
-            margin-top: 50px;
-        }
-        .button {
-            display: inline-block;
-            margin: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            text-decoration: none;
-            color: white;
-            background-color: #007BFF;
-            border-radius: 5px;
-        }
-        .button:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    <link rel="stylesheet" href="static/css/style2.css">
 </head>
 <body>
     <div class="container">
         <h1>BIENVENIDO A LA PÁGINA QUE CALCULA SU NOMINA</h1>
-        <a class="button" href="/crear-usuario"><b>Crear Nuevo Usuario</b></a>
+        <a class="button" href="{{ url_for('vista_usuarios.description') }}"><b>Ver Descripción del Proyecto</b></a>
+        <a class="button" href="/new-user"><b>Crear Nuevo Usuario</b></a>
         <a class="button" href="/buscar-usuario"><b>Buscar Usuario</b></a>
-        <a class="button" href="/actualizar-informacion"><b>Actualizar Información</b></a>
+        <a class="button" href="/actualizar-usuario"><b>Actualizar Usuario</b></a>
+        <a class="button" href="/calcular-liquidacion"><b>Calcular Liquidación</b></a>
         <a class="button" href="/eliminar-usuario"><b>Eliminar Usuario</b></a>
     </div>
 </body>

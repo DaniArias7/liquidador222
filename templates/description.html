@@ -3,20 +3,46 @@
 {% block title %}Descripción - Liquidador de Nómina{% endblock %}
 
 {% block content %}
-<h1>Descripción del Proyecto</h1>
+<h1>Descripción del Proyecto en la App Web</h1>
 
 <p>
-    El propósito del programa es calcular el salario mensual de un empleado considerando diferentes variables como el salario básico, días laborados, días de licencia, y días de incapacidad, entre otros.
+    Este proyecto tiene como objetivo principal desarrollar una aplicación web que permita calcular la nómina de los trabajadores, considerando diversos factores como el salario básico, días laborados, días de licencia, horas extras y contribuciones.
 </p>
 
+<h2>Funcionalidades Principales</h2>
+
+<ul>
+    <li>Crear, consultar, actualizar y eliminar registros de trabajadores en una base de datos.</li>
+    <li>Calcular el salario devengado, deducciones y monto a pagar por cada trabajador.</li>
+    <li>Almacenar los datos de los trabajadores y sus liquidaciones en tablas de una base de datos PostgreSQL.</li>
+    <li>Validar los datos ingresados por el usuario, asegurando que cumplan con los requisitos establecidos.</li>
+    <li>Mostrar los resultados de los cálculos de nómina en una interfaz web amigable para el usuario.</li>
+</ul>
+
+<h2>Detalles Técnicos</h2>
+
 <p>
-    Para llevar a cabo este cálculo, se utilizan varias constantes:
+    El proyecto utiliza las siguientes tecnologías y herramientas:
 </p>
 
 <ul>
-    <li>El salario mínimo legal en Colombia es de ${{ MINIMUM_WAGE }}.</li>
-    <li>La Unidad de Valor Tributario (UVT) tiene un valor de ${{ UVT }}.</li>
-    <li>Coeficientes para calcular el pago de horas extras en diferentes situaciones:
+    <li>Lenguaje de programación: Python</li>
+    <li>Framework web: Flask</li>
+    <li>Base de datos: PostgreSQL</li>
+    <li>Interfaz de usuario: HTML, CSS, Bootstrap</li>
+    <li>Bibliotecas y módulos: psycopg2, math</li>
+</ul>
+
+<h2>Constantes y Parámetros</h2>
+
+<p>
+    El programa utiliza varias constantes y parámetros para realizar los cálculos de nómina, incluyendo:
+</p>
+
+<ul>
+    <li>Salario mínimo legal en Colombia: ${{ MINIMUM_WAGE }}</li>
+    <li>Valor de la Unidad de Valor Tributario (UVT): ${{ UVT }}</li>
+    <li>Coeficientes para calcular horas extras:
         <ul>
             <li>Horas extras diurnas: {{ EXTRA_HOUR_DAYSHIFT }}</li>
             <li>Horas extras nocturnas: {{ EXTRA_HOUR_NIGHTSHIFT }}</li>
@@ -24,13 +50,21 @@
             <li>Horas extras nocturnas en días festivos: {{ EXTRA_HOUR_NIGHTSHIFT_HOLIDAYS }}</li>
         </ul>
     </li>
-    <li>El número de días y horas en un mes se establece en {{ MONTH_DAYS }} días y {{ MONTH_HOURS }} horas.</li>
-    <li>Porcentajes utilizados para calcular contribuciones de seguro de salud, aportes a pensiones, fondos de retiro y licencias por enfermedad:
+    <li>Número de días y horas promedio en un mes: {{ MONTH_DAYS }} días, {{ MONTH_HOURS }} horas</li>
+    <li>Porcentajes de contribuciones:
         <ul>
-            <li>Porcentaje de seguro de salud y aportes a pensiones: {{ PERCENTAGE_HEALTH_INSURANCE * 100 }}%</li>
-            <li>Porcentaje de fondo de retiro: {{ PERCENTAGE_RETIREMENT_FUND * 100 }}%</li>
+            <li>Seguro de salud y aportes a pensiones: {{ PERCENTAGE_HEALTH_INSURANCE * 100 }}%</li>
+            <li>Fondo de retiro: {{ PERCENTAGE_RETIREMENT_FUND * 100 }}%</li>
         </ul>
     </li>
-    <li>Una lista que define los porcentajes de retención salarial en función del salario en UVT.</li>
+    <li>Porcentajes de retención salarial según rangos de salario en UVT</li>
 </ul>
+
+<p>
+    Estos parámetros se utilizan en las funciones de cálculo de la nómina, asegurando que los resultados sean precisos y acordes a la legislación laboral vigente en Colombia.
+</p>
+
+<div class="submit-button">
+    <a class="button" href="{{ url_for('vista_usuarios.home') }}"><b>Presiona para volver al menú</b></a>
+</div>
 {% endblock %}

@@ -241,3 +241,9 @@ while True:
 
     except Exception as e:
         print(f"Se produjo un error: {e}")
+
+    
+    
+
+
+

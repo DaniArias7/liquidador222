@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualizar Usuario</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Actualizar Usuario</h1>
+        <form action="{{ url_for('vista_usuarios.actualizar_usuario_result') }}" method="post">
+            <label for="nombre">Nombre del Trabajador:</label>
+            <input type="text" id="nombre" name="nombre" required><br><br>
+            <label for="cedula">Cédula del Trabajador:</label>
+            <input type="text" id="cedula" name="cedula" required><br><br>
+            <label for="columna">Columna a Actualizar:</label>
+            <select id="columna" name="columna" required>
+                <option value="basic_salary">Salario Básico</option>
+                <option value="monthly_worked_days">Días Trabajados</option>
+                <option value="days_leave">Días de Licencia</option>
+                <option value="transportation_allowance">Subsidio de Transporte</option>
+                <option value="daytime_overtime_hours">Horas Extras Diurnas</option>
+                <option value="nighttime_overtime_hours">Horas Extras Nocturnas</option>
+                <option value="daytime_holiday_overtime_hours">Horas Extras Diurnas Festivos</option>
+                <option value="nighttime_holiday_overtime_hours">Horas Extras Nocturnas Festivos</option>
+                <option value="sick_leave_days">Días de Incapacidad</option>
+                <option value="health_contribution_percentage">Porcentaje Contribución Salud</option>
+                <option value="pension_contribution_percentage">Porcentaje Contribución Pensión</option>
+                <option value="solidarity_pension_fund_contribution_percentage">Porcentaje Fondo Solidaridad Pensional</option>
+            </select><br><br>
+            <label for="valor">Nuevo Valor:</label>
+            <input type="text" id="valor" name="valor" required><br><br>
+            <input type="submit" value="Actualizar">
+        </form>
+    </div>
+</body>
+</html>

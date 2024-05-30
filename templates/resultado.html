@@ -1,15 +1,30 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resultado</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style3.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>¡Usuario creado con éxito!</h1>
-        <p>Los datos del usuario han sido guardados correctamente en la base de datos.</p>
-        <a href="/">Volver al inicio</a> 
+        <h1>{{ mensaje }}</h1>
+        <!-- La etiqueta table se usa para crear tablas en HTML -->
+        {% if user %}
+        <table>
+            <!-- El elemento tr describe una fila de la tabla -->
+            <tr>
+                <!-- Cada elemento td corresponde a una celda dentro de la fila -->
+                <td><b><h3>Cédula: </h3></b></td>
+                <td><h5>{{ user.id }}</h5></td>
+            </tr>
+            <tr>
+                <td><b><h3>Nombre: </h3></b></td>
+                <td><h5>{{ user.name }}</h5></td>
+            </tr>
+        </table>
+        {% endif %}
+        <a class="button" href="/"><b>Presiona para volver al menú</b></a>
     </div>
 </body>
 </html>
