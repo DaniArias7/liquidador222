@@ -59,9 +59,13 @@ El proyecto presenta una arquitectura modular y bien estructurada, diseñada par
 20. calcular_liquidacion.html
 21. datos_usuario.html
 22. description.html
-23. style.css
-24. style2.css
-25. style3.css
+23. eliminar_usuario.html
+24. inicio.html
+25. resultado_liquidacion.html
+26. resultado.html
+27. style.css
+28. style2.css
+29. style3.css
 
 La estructuras por carpetas es la siguiente
 
