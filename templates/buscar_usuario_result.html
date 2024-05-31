@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Resultado de la Búsqueda</h1>
+    {% if user %}
+    <table>
+        <tr>
+            <td><b>Nombre:</b></td>
+            <td>{{ user.name }}</td>
+        </tr>
+        <tr>
+            <td><b>Cédula:</b></td>
+            <td>{{ user.id }}</td>
+        </tr>
+        <tr>
+            <td><b>Salario Básico:</b></td>
+            <td>{{ user.basic_salary }}</td>
+        </tr>
+        <tr>
+            <td><b>Días Trabajados:</b></td>
+            <td>{{ user.monthly_worked_days }}</td>
+        </tr>
+        <tr>
+            <td><b>Días de Licencia:</b></td>
+            <td>{{ user.days_leave }}</td>
+        </tr>
+        <tr>
+            <td><b>Subsidio de Transporte:</b></td>
+            <td>{{ user.transportation_allowance }}</td>
+        </tr>
+        <tr>
+            <td><b>Horas Extras Diurnas:</b></td>
+            <td>{{ user.daytime_overtime_hours }}</td>
+        </tr>
+        <tr>
+            <td><b>Horas Extras Nocturnas:</b></td>
+            <td>{{ user.nighttime_overtime_hours }}</td>
+        </tr>
+        <tr>
+            <td><b>Horas Extras Diurnas en Festivos:</b></td>
+            <td>{{ user.daytime_holiday_overtime_hours }}</td>
+        </tr>
+        <tr>
+            <td><b>Horas Extras Nocturnas en Festivos:</b></td>
+            <td>{{ user.nighttime_holiday_overtime_hours }}</td>
+        </tr>
+        <tr>
+            <td><b>Días de Incapacidad:</b></td>
+            <td>{{ user.sick_leave_days }}</td>
+        </tr>
+        <tr>
+            <td><b>Porcentaje de Contribución a Salud:</b></td>
+            <td>{{ user.health_contribution_percentage }}</td>
+        </tr>
+        <tr>
+            <td><b>Porcentaje de Contribución a Pensión:</b></td>
+            <td>{{ user.pension_contribution_percentage }}</td>
+        </tr>
+        <tr>
+            <td><b>Porcentaje de Contribución al Fondo de Retiro:</b></td>
+            <td>{{ user.solidarity_pension_fund_contribution_percentage }}</td>
+        </tr>
+    </table>
+    {% else %}
+    <p>{{ mensaje }}</p>
+    {% endif %}
+    <div class="submit-button">
+        <a class="button" href="{{ url_for('vista_usuarios.home') }}"><b>Regresar</b></a>
+    </div>
+</div>
+{% endblock %}

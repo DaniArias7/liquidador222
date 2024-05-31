@@ -53,9 +53,17 @@ def buscar_usuario_result():
     cedula = request.args["cedula"]
     trabajador = WorkersIncomeData.QueryWorker(nombre, cedula)
     if trabajador:
-        return render_template("resultado.html", user=trabajador, mensaje="Trabajador encontrado:")
+        return render_template(
+            "buscar_usuario_result.html",
+            user=trabajador,
+            mensaje="Trabajador encontrado:"
+        )
     else:
-        return render_template("resultado.html", mensaje="No se encontró ningún trabajador con el nombre y la cédula proporcionados.")
+        return render_template(
+            "buscar_usuario_result.html",
+            mensaje="No se encontró ningún trabajador con el nombre y la cédula proporcionados."
+        )
+
 
 @blueprint.route("/actualizar-usuario")
 def modificar_usuario():
