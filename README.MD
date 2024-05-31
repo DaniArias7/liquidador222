@@ -55,12 +55,13 @@ El proyecto presenta una arquitectura modular y bien estructurada, diseñada par
 16. actualizar_usuario.html
 17. base.html
 18. buscar_usuario.html
-19. calcular_liquidacion.html
-20. datos_usuario.html
-21. description.html
-22. style.css
-23. style2.css
-24. style3.css
+19. buscar_usuario_result.html
+20. calcular_liquidacion.html
+21. datos_usuario.html
+22. description.html
+23. style.css
+24. style2.css
+25. style3.css
 
 La estructuras por carpetas es la siguiente
 
@@ -93,7 +94,8 @@ La estructuras por carpetas es la siguiente
    - **actualizar_usuario.html**
    - **base.html** 
    - **buscar_usuario.html**
-   -**calcular_liquidacion.html**
+   - **buscar_usuario_result.html**
+   - **calcular_liquidacion.html**
    - **datos_usuario.html**
    - **description.html**
    - **eliminar_usuario**
