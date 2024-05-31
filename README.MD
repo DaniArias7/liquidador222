@@ -31,9 +31,12 @@ La instalación se puede llevar a cabo mediante el siguiente código en la termi
 * **Instalación de psycopg2**: Esa es una librería de Python que proporciona una interfaz para interactuar con bases de datos PostgreSQL.
 La instalación se puede llevar a cabo mediante el siguiente código en la terminal:  `pip install psycopg2` 
 
+* **Instalación de flask**: Esa es una librería de Python que proporciona la interacción entre una aplicación web hecha en PYTHON y unos templates hechos en HTML, para conectar ambos y hacer funcionar la app web.
+La instalación se puede llevar a cabo mediante el siguiente código en la terminal:  `pip install flask` 
+
 # ¿Cómo está hecho?
 
-El proyecto presenta una arquitectura modular y bien estructurada, diseñada para calcular la nómina de los empleados de una empresa de manera eficiente y precisa. El programa cuenta con 6 archivos, los cuales son:
+El proyecto presenta una arquitectura modular y bien estructurada, diseñada para calcular la nómina de los empleados de una empresa de manera eficiente y precisa. El programa cuenta con 24 archivos, los cuales son:
 
 1. MonthlyPaymentLogic.py
 2. MonthlyPaymentTest.py
@@ -46,6 +49,18 @@ El proyecto presenta una arquitectura modular y bien estructurada, diseñada par
 9. securitydb.py
 10. DatabaseTest.py
 11. consoledb.py
+12. app.py
+13. vista_usuarios.py
+15. crear_usuario.html
+16. actualizar_usuario.html
+17. base.html
+18. buscar_usuario.html
+19. calcular_liquidacion.html
+20. datos_usuario.html
+21. description.html
+22. style.css
+23. style2.css
+24. style3.css
 
 La estructuras por carpetas es la siguiente
 
@@ -60,6 +75,7 @@ La estructuras por carpetas es la siguiente
    - **TablesEmployer.py**: Definición de las tablas del empleador.
    - **securitydb.py**: Manejo de la seguridad de la base de datos.
    - **consoledb.py**: Interfaz de consola para la base de datos.
+   - **vista_usuarios.py**: Archivo que contiene los blueprints de de la interfaz web.
 
 3. **test**:
    - **MonthlyPaymentTest.py**: Pruebas unitarias para casos normales.
@@ -67,9 +83,29 @@ La estructuras por carpetas es la siguiente
    - **ErrorCaseTest.py**: Pruebas unitarias para casos de error.
    - **DatabaseTest.py**: Pruebas unitarias para la base de datos.
 
-4. **.gitignore**: Archivos y carpetas a ignorar por Git.
-5. **LICENSE**: Licencia MIT del proyecto.
-6. **README.md**: Documentación del proyecto, explicación del propósito, instalación y ejecución.
+4. **static**: 
+   - **style.css**: Decoradores de la interfaz web.
+   - **style2.css**: Decoradores de la interfaz web.
+   - **style3.css**: Decoradores de la interfaz web.
+
+5. **templates (archivos html para la interfaz web)**: 
+   - **crear_usuario.html**
+   - **actualizar_usuario.html**
+   - **base.html** 
+   - **buscar_usuario.html**
+   -**calcular_liquidacion.html**
+   - **datos_usuario.html**
+   - **description.html**
+   - **eliminar_usuario**
+   - **inicio**
+   - **resultado_liquidacion**
+   - **resultado**
+
+6. **app.py**: Aplicación web.
+7. **.gitignore**: Archivos y carpetas a ignorar por Git.
+8. **LICENSE**: Licencia MIT del proyecto.
+9. **README.md**: Documentación del proyecto, explicación del propósito, instalación y ejecución.
+10. **securitydb.py**: Datos privados donde se ingresan los parametros de conexión a la base de datos.
 
 
 El código utiliza la libreria estándar de Python, `math`, que proporciona funciones matemáticas básicas, como la función `trunc()` utilizada para truncar valores decimales. Esta biblioteca es fundamental para realizar cálculos precisos dentro del programa, como calcular porcentajes o redondear valores según sea necesario.
@@ -78,72 +114,108 @@ El código hace uso de la libreria `unittest`, que es un marco de pruebas unitar
 
 Además el código hace uso de la libreria `pytest` que es una librería de pruebas para Python que permite escribir pruebas simples y escalables.
 
+Sugerimos para revisión más profunda intalar la libreria `panda`.
+
+Por otro lado librerias necesarias para la ejecución del proyecto también son `psycopg2` para la Data Base y `flask` para la interfaz web.
+
 
 
 # Estructura sugerida:
 
-* Carpeta MonthlyPayment: Carpeta en la cual se guarda la lógica del proyecto.
+* Carpeta Model: Carpeta en la cual se guarda la lógica del proyecto.
+* Carpeta Cotroller: Carpeta en la cual se maneja la conexión del código a la base de datos.
 * Carpeta test: Carpeta en la cual se guardan las pruebas unitarias.
-* Carpeta console: Carpeta en la cual estará la interfaz de consola con la cual el usuario podrá manejar el código sin ver el código fuente.
-* Carpeta GUI: Carpeta en la cual estará la interfaz gráfica, la cual proporcionará una mayor comodidad para el usuario.
+* Carpeta view: Carpeta en la cual estarán las interfaces, tanto de consola y gráfica con la cual el usuario podrá manejar el código sin ver el código fuente.
+* Carpeta view_web: Carpeta en la cual estará la interfaz web, con lo cual el usuario podrá manejar el código sin ver el código fuente.
 
-# Como ejecutar la interfaz gráfica
-
-1) Dirijase a la pantalla de escritorio y en ese lugar cree una carpeta con el nombre: <Calculadora_de_nomina>
-
-2) Ahora copia  `git clone https://github.com/Tmurillo23/Liquidador_para_nomina.git`
-
-3) Ahora en la terminal copia  `cd Calculadora_de_nomina`
-
-4) ahora copia el siguiente codigo en la terminal `python ./Liquidador_para_nomina/src/Gui/Interfaz.py`
 
 # Como ejecutar las pruebas unitarias
 1) Dirijase a la pantalla de escritorio y en ese lugar cree una carpeta con el nombre: <Calculadora_de_nomina>
 
-2) Ahora copia  `git clone https://github.com/Tmurillo23/Liquidador_para_nomina.git`
+2) Ahora copia en la consola de bash `git clone https://github.com/hurluis/liquidador_nomina.git`
 
 3) Ahora en la terminal copia  `cd Calculadora_de_nomina`
 
 Dependiendo del caso de prueba se copia lo siguiente:
-4) Casos normales: ahora copia el siguiente codigo en la terminal `python ./Liquidador_para_nomina/test/MonthlyPaymentTest.py`
+4) Casos normales: ahora copia el siguiente codigo en la terminal `python ./liquidador_nomina/test/MonthlyPaymentTest.py`
 
-5) Casos extraordinarios: ahora copia el siguiente codigo en la terminal `python ./Liquidador_para_nomina/test/ExtraordinaryCasesTest.py`
+5) Casos extraordinarios: ahora copia el siguiente codigo en la terminal `python ./liquidador_nomina/test/ExtraordinaryCasesTest.py`
 
-6) Casos de error: ahora copia el siguiente codigo en la terminal `python ./Liquidador_para_nomina/src/test/ErrorCaseTest.py`
+6) Casos de error: ahora copia el siguiente codigo en la terminal `python ./liquidador_nomina/test/ErrorCaseTest.py`
 
-# Como ejecutar la interfaz por consola
+7) Si deseas devolverte usa `cd..`
 
-1) Dirijase a la pantalla de escritorio y en ese lugar cree una carpeta con el nombre: <Calculadora_de_nomina>
-
-2) Ahora copia  `git clone https://github.com/Tmurillo23/Liquidador_para_nomina.git`
-
-3) Ahora en la terminal copia  `cd Calculadora_de_nomina`
-
-4) ahora copia el siguiente codigo en la terminal `python ./Liquidador_para_nomina/src/Console/Console.py`
 
 # Como ejecutar la pruebas de la base de datos
 
 1) Dirijase a la pantalla de escritorio y en ese lugar cree una carpeta con el nombre: <Calculadora_de_nomina>
 
-2) Ahora copia  `git clone https://github.com/Tmurillo23/Liquidador_para_nomina.git`
+2) Ahora copia  `git clone https://github.com/hurluis/liquidador_nomina.git`
 
 3) Ahora en la terminal copia  `cd Calculadora_de_nomina`
 
-4) Para poder ejecutar las pruebas se debe modificar el archivo `securitydb.py que se encuentra en ./Liquidador_para_nomina/src/Model/securitydb.py ` Este archivo debe
-ser modificado usando un procesador de texto por consola como nano o usando el comando `notepad ./Liquidador_para_nomina/src/Model/securitydb.py `
-En este archivo debe ingresar los datos de conexión a su base de datos.
-5) ahora copia el siguiente codigo en la terminal `python ./Liquidador_para_nomina/src/test/DatabaseTest.py`
+4) Para poder ejecutar las pruebas se debe modificar el archivo `securitydb.py que se encuentra en ./liquidador_nomina/securitydb.py ` Este archivo debe
+ser modificado usando un procesador de texto por consola como nano o usando el comando `notepad ./liquidador_nomina/securitydb.py `
+En este archivo debe ingresar los datos de conexión a su base de datos, recuerde que el parametro de PGPORT siempre debe ser 5432 **EN CASO DE NO FUNCIONARLE** podra poner estos parametros de conexión abriendo el archivo en un editor de código, y colocando los datos dentro de securitydb.py.
+
+5) ahora copia el siguiente codigo en la terminal `python ./liquidador_nomina/test/DatabaseTest.py`
+
+6) Si deseas devolverte usa `cd..`
+
+
+# Como ejecutar la interfaz por consola
+
+1) Dirijase a la pantalla de escritorio y en ese lugar cree una carpeta con el nombre: <Calculadora_de_nomina>
+
+2) Ahora copia  `git clone https://github.com/hurluis/liquidador_nomina.git`
+
+3) Ahora en la terminal copia  `cd Calculadora_de_nomina`
+
+4) ahora copia el siguiente codigo en la terminal `python ./liquidador_nomina/src/view/Console.py`
+
+5) Si deseas devolverte usa `cd..`
+
+
+# Como ejecutar la interfaz gráfica
+
+1) Dirijase a la pantalla de escritorio y en ese lugar cree una carpeta con el nombre: <Calculadora_de_nomina>
+
+2) Ahora copia en la consola de bash `git clone https://github.com/hurluis/liquidador_nomina.git`
+
+3) Ahora en la terminal copia  `cd Calculadora_de_nomina`
+
+4) ahora copia el siguiente codigo en la terminal `python ./liquidador_nomina/src/view/Interfaz.py`
+
+5) Si deseas devolverte usa `cd..`
+
 
 # Como ejecutar la interfaz por consola de la base de datos
 
 1) Dirijase a la pantalla de escritorio y en ese lugar cree una carpeta con el nombre: <Calculadora_de_nomina>
 
-2) Ahora copia  `git clone https://github.com/Tmurillo23/Liquidador_para_nomina.git`
+2) Ahora copia  `git clone https://github.com/hurluis/liquidador_nomina.git`
 
 3) Ahora en la terminal copia  `cd Calculadora_de_nomina`
 
-4) Para poder ejecutar la interfaz se debe modificar el archivo `securitydb.py que se encuentra en ./Liquidador_para_nomina/src/Model/securitydb.py ` Este archivo debe
-ser modificado usando un procesador de texto por consola como nano o usando el comando `notepad ./Liquidador_para_nomina/src/Model/securitydb.py `
-En este archivo debe ingresar los datos de conexión a su base de datos.
+4) Para poder ejecutar las pruebas se debe modificar el archivo `securitydb.py que se encuentra en ./liquidador_nomina/securitydb.py ` Este archivo debe
+ser modificado usando un procesador de texto por consola como nano o usando el comando `notepad ./liquidador_nomina/securitydb.py `
+En este archivo debe ingresar los datos de conexión a su base de datos, recuerde que el parametro de PGPORT siempre debe ser 5432 **EN CASO DE NO FUNCIONARLE** podra poner estos parametros de conexión abriendo el archivo en un editor de código, y colocando los datos dentro de securitydb.py.
 
-5) ahora copia el siguiente codigo en la terminal `python ./Liquidador_para_nomina/src/view/consoledb.py`
+5) ahora copia el siguiente codigo en la terminal `python ./liquidador_nomina/src/view/consoledb.py`
+
+6) Si deseas devolverte usa `cd..`
+
+
+# Como ejecutar la interfaz web
+
+1) Dirijase a la pantalla de escritorio y en ese lugar cree una carpeta con el nombre: <Calculadora_de_nomina>
+
+2) Ahora copia  `git clone https://github.com/hurluis/liquidador_nomina.git`
+
+3) Ahora en la terminal copia  `cd Calculadora_de_nomina`
+
+4) ahora copia el siguiente codigo en la terminal `python ./liquidador_nomina/app.py`
+
+5) copie el link http que le arroja y ahora solo a disfrutar :D
+
+6) Si deseas devolverte usa `cd..`
